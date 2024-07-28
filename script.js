@@ -6,9 +6,12 @@ const player1 = createUser('Owen')
 const player2 = createUser('Drake')
 const gameBoard = (function() {
   const board = [
-    null, true, false,
-    null, false, false,
-    false, false, null,
+    // false, false, true,
+    // true, true, false,
+    // false, true, true,
+    null, null, null,
+    null, null, null,
+    null, null, null,
   ]
   // for (let i = 0; i < 9; i++)
   //   board.push(null)
@@ -68,13 +71,55 @@ const gameBoard = (function() {
   return {board, getWinner}
 })()
 
-for (let i = 0; i < gameBoard.board.length; i += 3) {
-  let s = ''
-  for (let j = i; j < i + 3; j++)
-    s += gameBoard.board[j] + ', '
-  s += i
-  console.log(s); 
-}
-console.warn('Results: ' + gameBoard.getWinner());
+const controller = (function() {
+  let round = 0
+  let turn = false
+  let winner = null
 
+  function play(idx) {
+    round++
+    turn = !turn
+    let activePlayer
+    if (turn)
+      activePlayer = player1
+    else
+      activePlayer = player2
+    // idx = getIDX()`
+    gameBoard.board[idx] = turn
+    winner = gameBoard.getWinner()
+    logGameBoard()
+    function getIDX() {
+      let idx = prompt(activePlayer.name)
+      idx = parseInt(idx)
+      if (!idx)
+        idx = 0
+      while (gameBoard.board[idx] != null || idx < -1 || idx >= 9) {
+        idx = prompt(activePlayer.name + ' choose a nother idx!')
+        idx = parseInt(idx)
+        if (!idx)
+          idx = 0
+      }
+      console.log(idx);
+      return idx
+    }
+  }
+  while (winner == null && round < 9) {
+    play()
+  }
+})()
+
+function logGameBoard() {
+  for (let i = 0; i < gameBoard.board.length; i += 3) {
+    let s = ''
+    for (let j = i; j < i + 3; j++)
+      s += gameBoard.board[j] + ', '
+    s += i
+    console.log(s); 
+  }
+}
+let winner = gameBoard.getWinner()
+if (winner)
+  console.warn('Winner: ' + player1.name);
+else
+  console.warn('Winner: ' + player2.name);
 
