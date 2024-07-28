@@ -1,0 +1,60 @@
+:root {
+  --max: 800px;
+  --cloud: #eee;
+  --smoke: #ddd;
+  --bone: #ccc;
+  --gray: #aaa;
+  --blue: #1180ff;
+  --red: #ff3434;
+}
+
+* {
+  transition: all .4s;
+}
+
+html {
+  font-family: sans-serif;
+}
+
+.title {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 80%;
+  max-width: var(--max);
+  margin: 24px auto;
+  /* padding: 0 12%; */
+  border: 1px solid var(--bone);
+}
+
+.board button {
+  aspect-ratio: 1;
+  padding: 4px;
+  font-size: 4em;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: white;
+  border: inherit;
+}
+
+.board button:hover {
+  background-color: var(--smoke);
+}
+
+.board .x {
+  color: var(--red);
+}
+
+.board .o {
+  color: var(--blue);
+}
+
+.board .x:hover,
+.board .o:hover {
+  background-color: white;
+}

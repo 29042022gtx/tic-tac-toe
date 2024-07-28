@@ -6,9 +6,9 @@ const player1 = createUser('Owen')
 const player2 = createUser('Drake')
 const gameBoard = (function() {
   const board = [
+    // true, true, false,
     // false, false, true,
     // true, true, false,
-    // false, true, true,
     null, null, null,
     null, null, null,
     null, null, null,
@@ -73,21 +73,24 @@ const gameBoard = (function() {
 
 const controller = (function() {
   let round = 0
-  let turn = false
+  let turn = true
   let winner = null
 
   function play(idx) {
     round++
-    turn = !turn
     let activePlayer
     if (turn)
       activePlayer = player1
     else
       activePlayer = player2
-    // idx = getIDX()`
+    // idx = getIDX()
+    if (gameBoard.board[idx] != null)
+      return false
     gameBoard.board[idx] = turn
+    turn = !turn
     winner = gameBoard.getWinner()
-    logGameBoard()
+    // logGameBoard()
+    return true
     function getIDX() {
       let idx = prompt(activePlayer.name)
       idx = parseInt(idx)
@@ -103,9 +106,10 @@ const controller = (function() {
       return idx
     }
   }
-  while (winner == null && round < 9) {
-    play()
-  }
+  // while (winner == null && round < 9) {
+  //   play()
+  // }
+  return {play}
 })()
 
 function logGameBoard() {
@@ -117,9 +121,47 @@ function logGameBoard() {
     console.log(s); 
   }
 }
-let winner = gameBoard.getWinner()
-if (winner)
-  console.warn('Winner: ' + player1.name);
-else
-  console.warn('Winner: ' + player2.name);
+const display = (function() {
+  const board = document.querySelector('.board')
+  board.addEventListener('click', function clickArea(e) {
+    let idx = e.target.getAttribute('data-idx')
+    if (!idx)
+      return
+    markArea(idx)
+    if (gameBoard.getWinner())
+      board.removeEventListener('click', clickArea)
+  })
+  pushBoard()
+
+  function markArea(idx) {
+    if (!controller.play(idx))
+      return
+    let area = board.querySelector('[data-idx ="' + idx + '"]')
+    let mark = null
+    if (gameBoard.board[idx])
+      mark = 'o'
+    else if (gameBoard.board[idx] == false)
+      mark = 'x'
+    area.textContent = mark
+    if (mark)
+      area.classList.add(mark)
+  }
+
+  function pushBoard() {
+    for(let i = 0; i < gameBoard.board.length; i++) {
+      let btn = document.createElement('button')
+      btn.setAttribute('data-idx', i)
+      let mark = null
+      if (gameBoard.board[i])
+        mark = 'o'
+      else if (gameBoard.board[i] == false)
+        mark = 'x'
+      btn.textContent = '\u00A0'
+      if (mark)
+        btn.classList.add(mark)
+      board.append(btn)
+    }
+  }
+  
+})()
 
