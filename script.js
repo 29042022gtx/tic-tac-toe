@@ -7,7 +7,7 @@ const player2 = createUser('Drake')
 const gameBoard = (function() {
   const board = [
     // true, true, false,
-    // false, false, true,
+    // false, true, true,
     // true, true, false,
     null, null, null,
     null, null, null,
@@ -83,7 +83,6 @@ const controller = (function() {
       activePlayer = player1
     else
       activePlayer = player2
-    // idx = getIDX()
     if (gameBoard.board[idx] != null)
       return false
     gameBoard.board[idx] = turn
@@ -91,25 +90,11 @@ const controller = (function() {
     winner = gameBoard.getWinner()
     // logGameBoard()
     return true
-    function getIDX() {
-      let idx = prompt(activePlayer.name)
-      idx = parseInt(idx)
-      if (!idx)
-        idx = 0
-      while (gameBoard.board[idx] != null || idx < -1 || idx >= 9) {
-        idx = prompt(activePlayer.name + ' choose a nother idx!')
-        idx = parseInt(idx)
-        if (!idx)
-          idx = 0
-      }
-      console.log(idx);
-      return idx
-    }
   }
   // while (winner == null && round < 9) {
   //   play()
   // }
-  return {play}
+  return {turn, play}
 })()
 
 function logGameBoard() {
@@ -123,19 +108,57 @@ function logGameBoard() {
 }
 const display = (function() {
   const board = document.querySelector('.board')
-  board.addEventListener('click', function clickArea(e) {
-    let idx = e.target.getAttribute('data-idx')
-    if (!idx)
-      return
-    markArea(idx)
-    if (gameBoard.getWinner())
-      board.removeEventListener('click', clickArea)
+  const playerwrp1 = document.querySelector('.player1')
+  const playerwrp2 = document.querySelector('.player2')
+  const nameDialog = document.querySelector('dialog.player-name-dialog')
+  const nameForm = nameDialog.querySelector('form')
+  const formSubmit = nameForm.querySelector('#submit')
+  const formCancel = nameForm.querySelector('#cancel')
+
+  formSubmit.addEventListener('click', (e) => {
+    e.preventDefault()
+    nameDialog.close()
+    player1.name = nameForm.player1Name.value
+    player2.name = nameForm.player2Name.value
+    pushPlayerName()
   })
+
+  formCancel.addEventListener('click', () => {
+    // nameDialog.close()
+    // pushPlayerName()
+  })
+
+  board.addEventListener('click', function clickArea(e) {
+    let idx = +e.target.getAttribute('data-idx')
+    if (isNaN(idx))
+      return
+    if (!markArea(idx))
+      return
+    if (gameBoard.getWinner() != null) {
+      inertBoard(clickArea)
+      return
+    }
+    switchTurn()
+  })
+  playerwrp1.addEventListener('click', function() {
+    nameDialog.showModal()
+  })
+  playerwrp2.addEventListener('click', function() {
+    nameDialog.showModal()
+  })
+  pushPlayerName()
   pushBoard()
+  nameDialog.showModal()
+  
+  function inertBoard(clickArea) {
+    board.removeEventListener('click', clickArea)
+    for(let i = 0; i < board.children.length; i++)
+      board.children[i].classList.remove('area')
+  }
 
   function markArea(idx) {
     if (!controller.play(idx))
-      return
+      return false
     let area = board.querySelector('[data-idx ="' + idx + '"]')
     let mark = null
     if (gameBoard.board[idx])
@@ -145,6 +168,20 @@ const display = (function() {
     area.textContent = mark
     if (mark)
       area.classList.add(mark)
+    return true
+  }
+
+  function switchTurn() {
+    playerwrp1.classList.toggle('active')
+    playerwrp2.classList.toggle('active')
+  }
+
+  function pushPlayerName() {
+    playerwrp1.textContent = player1.name
+    playerwrp2.textContent = player2.name
+    nameForm.player1Name.value = player1.name
+    nameForm.player2Name.value = player2.name
+
   }
 
   function pushBoard() {
@@ -159,9 +196,9 @@ const display = (function() {
       btn.textContent = '\u00A0'
       if (mark)
         btn.classList.add(mark)
+      btn.classList.add('area')
       board.append(btn)
     }
   }
   
 })()
-

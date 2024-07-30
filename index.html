@@ -10,9 +10,33 @@
   <div class="title">
     Tic Tac Toe
   </div>
+  <div class="player">
+    <div class="player1 active">
+      
+    </div>
+    <div class="player2">
+      
+    </div>
+  </div>
   <div class="board">
     
   </div>
+  <dialog class="player-name-dialog">
+    <form class="player-name-form" action="">
+      <label for="player1Name">Player1's name</label>
+      <input type="text" name="player1Name" id="player1Name"
+        placeholder="Player1's name">
+      <label for="player2Name">Player2's name</label>
+      <input type="text" name="player2Name" id="player2Name"
+        placeholder="Player2's name">
+        <button id="cancel" formmethod="dialog">Cancel</button>
+      <button id="submit">Ok</button>
+    </form>
+  </dialog>
+  <!-- <dialog class=".dialog" open="">
+    Owen wins!
+    <button>Replay</button>
+  </dialog> -->
   <script src="./script.js"></script>
 </body>
 </html>

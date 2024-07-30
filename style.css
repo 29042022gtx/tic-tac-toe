@@ -1,11 +1,16 @@
 :root {
-  --max: 800px;
+  --max: 400px;
   --cloud: #eee;
   --smoke: #ddd;
   --bone: #ccc;
   --gray: #aaa;
+  --dark: #444;
   --blue: #1180ff;
+  --lightblue: #89c0ff;
   --red: #ff3434;
+  --lightred: #ff6868;
+  --shadow: ;
+  --color: ;
 }
 
 * {
@@ -16,18 +21,52 @@ html {
   font-family: sans-serif;
 }
 
+body > * {
+  width: 80%;
+  min-width: fit-content;
+  max-width: var(--max);
+  margin: auto;
+}
+
 .title {
   font-size: 2em;
   font-weight: bold;
   text-align: center;
 }
 
+.player {
+  display: flex;
+  justify-content: space-between;
+  padding: 24px 0;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--bone);
+  /* text-shadow: 2px 1px 4px var(--shadow); */
+}
+
+.player1 {
+  --color: var(--blue);
+  --shadow: var(--lightblue);
+}
+
+.player2 {
+  --color: var(--red);
+  --shadow: var(--lightred);
+}
+
+.active {
+  color: var(--color);
+  text-shadow: 2px 1px 4px var(--shadow);
+}
+
+.inert {
+  color: var(--bone);
+  /* text-shadow: none; */
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  width: 80%;
-  max-width: var(--max);
-  margin: 24px auto;
   /* padding: 0 12%; */
   border: 1px solid var(--bone);
 }
@@ -38,11 +77,18 @@ html {
   font-size: 4em;
   font-weight: bold;
   text-transform: uppercase;
+  color: var(--smoke);
   background-color: white;
   border: inherit;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
 }
 
-.board button:hover {
+.board button:focus-visible {
+  outline-color: var(--dark);
+}
+
+.board .area:hover {
   background-color: var(--smoke);
 }
 
@@ -57,4 +103,61 @@ html {
 .board .x:hover,
 .board .o:hover {
   background-color: white;
+}
+
+.player-name-dialog {
+  width: fit-content;
+  padding: 16px;
+  border: none;
+  margin: auto;
+  /* border-radius: 8px; */
+}
+
+.player-name-dialog::backdrop {
+  background-color: black;
+  opacity: .2;
+  filter: blur(2px);
+}
+
+.player-name-dialog form {
+  /* padding: 16px; */
+  /* background-color: black; */
+}
+
+.player-name-dialog form > * {
+  margin: 4px 0;
+}
+
+.player-name-dialog form label {
+  display: block;
+  /* padding: 4px 0; */
+  font-size: .8em;
+}
+
+.player-name-dialog form input {
+  display: block;
+  padding: 4px;
+  font-size: .9em;
+  border: 1px solid var(--dark);
+  outline: 1px solid transparent;
+}
+
+.player-name-dialog form input:focus {
+  outline-color: var(--dark);
+  /* outline-offset: -2px; */
+}
+
+.player-name-dialog form button {
+  color: white;
+  padding: 4px 8px;
+  border: 1px solid var(--dark);
+  border: none;
+}
+
+.player-name-dialog form #submit {
+  background-color: var(--blue);
+}
+
+.player-name-dialog form #cancel {
+  background-color: var(--red);
 }
