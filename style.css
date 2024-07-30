@@ -9,6 +9,7 @@
   --lightblue: #89c0ff;
   --red: #ff3434;
   --lightred: #ff6868;
+  --green: #00c220;
   --shadow: ;
   --color: ;
 }
@@ -114,8 +115,7 @@ body > * {
 }
 
 .player-name-dialog::backdrop {
-  background-color: black;
-  opacity: .2;
+  background-color: #0008;
   filter: blur(2px);
 }
 
@@ -160,4 +160,26 @@ body > * {
 
 .player-name-dialog form #cancel {
   background-color: var(--red);
+}
+
+.dialog-result {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: transparent;
+  border: none;
+}
+
+.dialog-result::backdrop {
+  background-color: #000c;
+}
+
+.dialog-result button {
+  display: block;
+  margin: 8px auto;
+  padding: 4px 8px;
+  color: white;
+  background-color: var(--green);
+  border: 1px solid var(--gray);
 }

@@ -13,8 +13,6 @@ const gameBoard = (function() {
     null, null, null,
     null, null, null,
   ]
-  // for (let i = 0; i < 9; i++)
-  //   board.push(null)
 
   const getWinner = () => {
     const boardSize = 3
@@ -67,17 +65,24 @@ const gameBoard = (function() {
       winner = winCross()
     return winner
   }
+
+  function reset() {
+    board.splice(0, 9, 
+      null, null, null,
+      null, null, null,
+      null, null, null,
+    )
+  }
   
-  return {board, getWinner}
+  return {board, getWinner, reset}
 })()
 
 const controller = (function() {
-  let round = 0
+  let count = 0
   let turn = true
   let winner = null
 
   function play(idx) {
-    round++
     let activePlayer
     if (turn)
       activePlayer = player1
@@ -85,16 +90,22 @@ const controller = (function() {
       activePlayer = player2
     if (gameBoard.board[idx] != null)
       return false
+    count++
     gameBoard.board[idx] = turn
     turn = !turn
     winner = gameBoard.getWinner()
-    // logGameBoard()
     return true
   }
-  // while (winner == null && round < 9) {
-  //   play()
-  // }
-  return {turn, play}
+
+  function getRound() {
+    return count
+  }
+
+  function reset() {
+    count = 0
+  }
+  
+  return {turn, getRound, play, reset}
 })()
 
 function logGameBoard() {
@@ -114,6 +125,17 @@ const display = (function() {
   const nameForm = nameDialog.querySelector('form')
   const formSubmit = nameForm.querySelector('#submit')
   const formCancel = nameForm.querySelector('#cancel')
+  const dialogResult = document.querySelector('.dialog-result')
+  const replay = dialogResult.querySelector('#replay')
+  pushPlayerName()
+  pushBoard()
+  nameDialog.showModal()
+
+  replay.addEventListener('click', () => {
+    dialogResult.close()
+    clearBoard()
+    switchTurn()
+  })
 
   formSubmit.addEventListener('click', (e) => {
     e.preventDefault()
@@ -125,35 +147,48 @@ const display = (function() {
 
   formCancel.addEventListener('click', () => {
     // nameDialog.close()
-    // pushPlayerName()
+    pushPlayerName()
   })
 
   board.addEventListener('click', function clickArea(e) {
-    let idx = +e.target.getAttribute('data-idx')
-    if (isNaN(idx))
+    const idx = +e.target.getAttribute('data-idx')
+    if (isNaN(idx) || !markArea(idx))
       return
-    if (!markArea(idx))
-      return
-    if (gameBoard.getWinner() != null) {
-      inertBoard(clickArea)
+    const winner = gameBoard.getWinner()
+    if (winner != null ||
+      controller.getRound() >= 9) {
+      inertBoard(clickArea, winner)
       return
     }
     switchTurn()
   })
+
   playerwrp1.addEventListener('click', function() {
     nameDialog.showModal()
   })
   playerwrp2.addEventListener('click', function() {
     nameDialog.showModal()
   })
-  pushPlayerName()
-  pushBoard()
-  nameDialog.showModal()
+
+  function clearBoard() {
+    for (let i = board.children.length; i > 0; i--)
+      board.removeChild(board.lastChild)
+    gameBoard.reset()
+    pushBoard()
+    controller.reset()
+  }
   
-  function inertBoard(clickArea) {
-    board.removeEventListener('click', clickArea)
-    for(let i = 0; i < board.children.length; i++)
-      board.children[i].classList.remove('area')
+  function inertBoard(clickArea, winner) {
+    // board.removeEventListener('click', clickArea)
+    // for(let i = 0; i < board.children.length; i++)
+    //   board.children[i].classList.remove('area')
+    let result = dialogResult.querySelector('.results')
+    if (winner == null)
+      result.textContent = 'It\'s a draw!'
+    else
+      result.textContent = 
+        (winner ? player1.name : player2.name) + ' wins!'
+    dialogResult.showModal()
   }
 
   function markArea(idx) {
